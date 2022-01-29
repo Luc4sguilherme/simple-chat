@@ -1,0 +1,13 @@
+{
+  "App": {
+    "port": 3333,
+    "logger": {
+      "enabled": true,
+      "level": "info"
+    }
+  },
+  "Redis": {
+    "host": "redis",
+    "port": 6379
+  }
+}
