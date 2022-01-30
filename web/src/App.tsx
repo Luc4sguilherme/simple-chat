@@ -11,19 +11,33 @@ import './App.css';
 
 const LIMIT_OF_LENGTH = 35;
 
+interface Message {
+  time: string;
+  data: string;
+}
+
 function App() {
   const [count, setCount] = useState(0);
   const [textAreaValue, setTextAreaValue] = useState('');
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const messageAreaRef = useRef<HTMLDivElement>(null);
 
   function clearMessageInput() {
     setTextAreaValue('');
   }
 
+  function getTime() {
+    return moment().format('HH:mm');
+  }
+
   function sendMessage() {
     if (textAreaValue.length > 0) {
-      socket.emit('message', textAreaValue);
+      const message = {
+        time: getTime(),
+        data: textAreaValue,
+      };
+
+      socket.emit('message', message);
     }
   }
 
@@ -53,16 +67,12 @@ function App() {
     }
   }
 
-  function getTime() {
-    return moment().format('HH:MM');
-  }
-
   useEffect(() => {
     checkLimitMessageLength();
   }, [messages]);
 
   useEffect(() => {
-    configureBroadcastEvent((data: string) => {
+    configureBroadcastEvent((data: Message) => {
       setMessages(messagesState => [...messagesState, data]);
 
       if (messageAreaRef.current) {
@@ -82,7 +92,7 @@ function App() {
         <div className="messages-area" ref={messageAreaRef}>
           {messages.map((message, index) => (
             <p className="message" key={index}>
-              <span className="date-time">{getTime()}</span> - {message}
+              <span className="date-time">{message.time}</span> - {message.data}
             </p>
           ))}
         </div>
