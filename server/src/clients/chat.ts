@@ -43,14 +43,14 @@ export class Chat {
     });
   }
 
-  private clientDisconnectHanlder(client: Socket) {
+  private clientDisconnectHandler(client: Socket) {
     logger.info(`client ID:${client.id} disconnected`);
     this.clientsCountEvent();
   }
 
   private clientDisconnectEvent(client: Socket) {
     client.on('disconnect', () => {
-      this.clientDisconnectHanlder(client);
+      this.clientDisconnectHandler(client);
     });
   }
 
