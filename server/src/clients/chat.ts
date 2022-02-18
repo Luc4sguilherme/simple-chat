@@ -38,7 +38,7 @@ export class Chat {
   }
 
   private clientConnectEvent() {
-    this.io.on('connection', client => {
+    this.io.on('connection', (client: Socket) => {
       this.clientConnectHandler(client);
     });
   }
@@ -60,12 +60,12 @@ export class Chat {
   }
 
   clientMessageEvent(client: Socket) {
-    client.on('message', message => {
+    client.on('message', (message: string) => {
       this.clientMessageHandler(message, client.id);
     });
   }
 
-  public getQuantityClientsConnected() {
+  public getQuantityClientsConnected(): number {
     return this.io.engine.clientsCount;
   }
 
