@@ -1,4 +1,4 @@
-import './util/module-alias';
+import { errors } from 'celebrate';
 import cors from 'cors';
 import express, { Application, Express } from 'express';
 import expressPino from 'express-pino-logger';
@@ -6,6 +6,8 @@ import helmet from 'helmet';
 import http from 'http';
 
 import { Chat } from '@src/clients/chat';
+import * as database from '@src/database';
+import { router as routerAuth } from '@src/routes/auth';
 import queue from '@src/services/queue';
 
 import logger from './logger';
@@ -25,6 +27,10 @@ export class Server {
     this.setupExpress();
     this.setupChat();
     this.setupQueue();
+    this.setupRoutes();
+    this.setupErrors();
+
+    await this.databaseSetup();
   }
 
   private setupExpress(): void {
@@ -33,6 +39,7 @@ export class Server {
         logger,
       }),
     );
+    this.app.use(express.json());
     this.app.use(helmet());
     this.app.use(
       cors({
@@ -43,6 +50,18 @@ export class Server {
 
   private setupChat() {
     this.chat.init();
+  }
+
+  private setupRoutes() {
+    this.app.use('/auth', routerAuth);
+  }
+
+  private setupErrors() {
+    this.app.use(errors());
+  }
+
+  private async databaseSetup(): Promise<void> {
+    await database.connect();
   }
 
   private setupQueue() {

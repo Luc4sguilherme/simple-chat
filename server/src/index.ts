@@ -1,3 +1,4 @@
+import './util/module-alias';
 import config from 'config';
 
 import logger from './logger';

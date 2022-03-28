@@ -9,6 +9,14 @@ services:
     networks:
       - app-network
 
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    expose:
+      - 27017
+    networks:
+      - app-network
+
   server:
     build: ./server
     container_name: server
@@ -18,6 +26,7 @@ services:
       - ./server:/home/node/app
     depends_on:
       - redis
+      - mongodb
     networks:
       - app-network
 
@@ -36,4 +45,3 @@ services:
 networks:
   app-network:
     driver: bridge
-     

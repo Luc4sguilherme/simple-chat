@@ -2,10 +2,12 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 
 import logger from '@src/logger';
+import { authMiddleware } from '@src/middlewares/auth';
 import queue from '@src/services/queue';
 
 export class Chat {
   private io: Server;
+  private clientsCount: number;
 
   constructor(private httpServer?: http.Server) {
     this.io = new Server(this.httpServer, {
@@ -13,6 +15,9 @@ export class Chat {
         origin: '*',
       },
     });
+
+    this.clientsCount = 0;
+    this.io.use(authMiddleware);
   }
 
   init() {
@@ -32,6 +37,8 @@ export class Chat {
   private clientConnectHandler(client: Socket) {
     logger.info(`client ID:${client.id} connected`);
 
+    this.clientsCount++;
+
     this.clientsCountEvent();
     this.clientDisconnectEvent(client);
     this.clientMessageEvent(client);
@@ -45,6 +52,11 @@ export class Chat {
 
   private clientDisconnectHandler(client: Socket) {
     logger.info(`client ID:${client.id} disconnected`);
+
+    if (this.clientsCount > 0) {
+      this.clientsCount--;
+    }
+
     this.clientsCountEvent();
   }
 
@@ -66,18 +78,19 @@ export class Chat {
   }
 
   public getQuantityClientsConnected(): number {
-    return this.io.engine.clientsCount;
+    return this.clientsCount;
   }
 
   private clientsCountHandler() {
     const quantityClients = this.getQuantityClientsConnected();
 
     logger.info(`${quantityClients} client(s) connected`);
+
+    return quantityClients;
   }
 
   private clientsCountEvent() {
-    this.clientsCountHandler();
-    this.io.emit('count', this.getQuantityClientsConnected());
+    this.io.emit('count', this.clientsCountHandler());
   }
 
   private errorHandler(error: Error) {
