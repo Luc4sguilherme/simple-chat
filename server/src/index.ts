@@ -1,5 +1,5 @@
 import './util/module-alias';
-import config from 'config';
+import config from '~/config';
 
 import logger from './logger';
 import { Server } from './server';
@@ -24,7 +24,7 @@ process.on('uncaughtException', error => {
 (async (): Promise<void> => {
   try {
     const exitSignals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
-    const server = new Server(config.get('App.port'));
+    const server = new Server(config.App.port);
 
     await server.init();
     server.start();

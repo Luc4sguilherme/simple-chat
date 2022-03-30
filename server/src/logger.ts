@@ -1,10 +1,11 @@
-import config from 'config';
 import pino from 'pino';
+
+import config from '~/config';
 
 export default pino(
   {
-    enabled: config.get('App.logger.enabled'),
-    level: config.get('App.logger.level'),
+    enabled: config.App.logger.enabled,
+    level: config.App.logger.level,
     transport: {
       target: 'pino-pretty',
       options: {

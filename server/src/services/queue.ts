@@ -1,6 +1,7 @@
 import Bull, { Queue as IQueue } from 'bull';
-import config from 'config';
 import moment from 'moment';
+
+import config from '~/config';
 
 import { Chat } from '@src/clients/chat';
 import logger from '@src/logger';
@@ -26,8 +27,8 @@ const queues: Queues[] = [
   {
     bull: new Bull('chatMessage', {
       redis: {
-        port: config.get('Redis.port'),
-        host: config.get('Redis.host'),
+        port: config.Redis.port,
+        host: config.Redis.host,
       },
     }),
     name: 'chatMessage',

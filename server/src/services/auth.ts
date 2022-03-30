@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
-import config from 'config';
 import jwt from 'jsonwebtoken';
+
+import config from '~/config';
 
 export interface JwtToken {
   sub: string;
@@ -22,12 +23,12 @@ export default class AuthService {
   }
 
   public static generateToken(sub: string): string {
-    return jwt.sign({ sub }, config.get('Auth.secret'), {
-      expiresIn: config.get('Auth.tokenExpiresIn'),
+    return jwt.sign({ sub }, config.Auth.secret, {
+      expiresIn: config.Auth.tokenExpiresIn,
     });
   }
 
   public static decodeToken(token: string): JwtToken {
-    return jwt.verify(token, config.get('Auth.secret')) as JwtToken;
+    return jwt.verify(token, config.Auth.secret) as JwtToken;
   }
 }
