@@ -56,7 +56,7 @@ function SignIn() {
       <div className="signin-form">
         <div className="signin-form-group">
           <input
-            type="username"
+            type="text"
             name="username"
             id="username"
             onChange={event => {
